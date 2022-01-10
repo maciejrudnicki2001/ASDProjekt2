@@ -1,3 +1,6 @@
+import heapSortAlgoritm
+
+
 class node:
     def __init__(self, freq, symbol, left=None, right=None):
         self.freq = freq
@@ -31,7 +34,7 @@ def printNodes(node, val=''):
     if(node.right):
         printNodes(node.right, newVal)
     if(not node.left and not node.right):
-        print(f"{node.symbol}:{newVal}")
+
         values[node.symbol] = newVal
 
 nodes = []
@@ -42,32 +45,27 @@ freqAndLetters = calcFreq(text)
 for x in freqAndLetters:
     nodes.append(node(freqAndLetters[x], x))
 while len(nodes) > 1:
+    heapSortAlgoritm.buildHeap(nodes)
+    left = nodes.pop(0)
 
-    nodes = sorted(nodes, key=lambda x: x.freq)
-
-    left = nodes[0]
-    right = nodes[1]
+    heapSortAlgoritm.buildHeap(nodes)
+    right = nodes.pop(0)
 
     left.huff = 0
     right.huff = 1
 
     newNode = node(left.freq+right.freq, left.symbol+right.symbol, left, right)
-
-    nodes.remove(left)
-    nodes.remove(right)
     nodes.append(newNode)
 
 dictionary = printNodes(nodes[0])
 
 
-
-
 def writeFileByte(filenamewrite):
-    with open("encryptedData", "wb") as f:
+    with open("encryptedData", "ab") as f:
         f.write(bitstring_to_bytes(filenamewrite))
 
 def bitstring_to_bytes(s):
-    b = bytearray()
+
     w = [int(s[i:i+8],2) for i in range(0, len(s), 8)]
     return(bytes(w))
 
@@ -76,10 +74,11 @@ def encryptDataWithSaving(data, dictionary):
     symbols = ""
     for element in data:
         symbols = symbols + dictionary[element]
-    writeFileByte(symbols)
-    with open('encryptedData.txt', 'w') as f:
+
+    with open('encryptedData', 'w') as f:
         for x in dictionary:
             f.write(x + ": " + dictionary[x] + "\n")
+    writeFileByte(symbols)
     return symbols
 
 text = encryptDataWithSaving(text, values)
